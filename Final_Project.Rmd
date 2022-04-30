@@ -6,30 +6,186 @@ always_allow_html: true
 output: html_document
 ---
 
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(plotly)
+library(tidyr)
+library(dplyr)
+library(googleVis)
+PrePlayers=2880
+RegPlayers=1696
+PreGameC=c(54,45,46,34,49,0,22) 
+PrePracC=c(29,26,45,45,30,30,30)
+PreTotC=c(83,71,91,79,79,30,52)
+RegGameC=c(183,166,178,127,136,129,126)
+RegPracC=c(9,6,12,8,9,13,9)
+RegTotC=c(192,172,190,135,145,142,135)
+CombGameC=c(237,211,224,161,185,129,148)
+CombPracC=c(38,32,57,53,39,43,39)
+CombTotC=c(275,243,281,214,224,172,187)
+GameNum=c(16,16,16,16,16,16,17)
+ConcAvg=c(17.1875,15.1875,17.5625,13.3750,14.0000,10.7500,11.0000)
+Concussion=data.frame(year=c("2015", "2016", "2017", "2018", "2019", "2020", "2021"), 
+              PreGame=c(54,45,46,34,49,0,22), 
+              PrePrac=c(29,26,45,45,30,30,30),
+              PreTot=c(83,71,91,79,79,30,52),
+              RegGame=c(183,166,178,127,136,129,126),
+              RegPrac=c(9,6,12,8,9,13,9),
+              RegTot=c(192,172,190,135,145,142,135),
+              CombGame=c(237,211,224,161,185,129,148),
+              CombPrac=c(38,32,57,53,39,43,39),
+              CombTot=c(275,243,281,214,224,172,187),
+              GameNum=c(16,16,16,16,16,16,17),
+              ConcAvg=c(17.1875,15.1875,17.5625,13.3750,14.0000,10.7500,11.0000))
+PreGameA=c(16,11,16,18,10,0,13)
+PrePracA=c(13,9,15,10,7,11,9)
+PreTotA=c(29,20,31,28,17,11,22)
+RegGameA=c(25,29,21,24,25,36,43)
+RegPracA=c(5,7,2,5,7,4,6)
+RegTotA=c(30,36,23,29,32,40,49)
+CombGameA=c(41,40,37,42,35,36,56)
+CombPracA=c(18,16,17,15,14,15,15)
+CombTotA=c(59,56,54,57,49,51,71)
+ACLAvg=CombTotA/GameNum
+ACL=data.frame(year=c("2015", "2016", "2017", "2018", "2019", "2020", "2021"), 
+                      PreGame=c(16,11,16,18,10,0,13), 
+                      PrePrac=c(13,9,15,10,7,11,9),
+                      PreTot=c(29,20,31,28,17,11,22),
+                      RegGame=c(25,29,21,24,25,36,43),
+                      RegPrac=c(5,7,2,5,7,4,6),
+                      RegTot=c(30,36,23,29,32,40,49),
+                      CombGame=c(41,40,37,42,35,36,56),
+                      CombPrac=c(18,16,17,15,14,15,15),
+                      CombTot=c(59,56,54,57,49,51,71),
+                      ACLAvg=c(3.687500,3.500000,3.375000,3.562500,3.062500,3.187500,4.176471))
+
+PreGameM=c(38,21,20,23,23,0,18) 
+PrePracM=c(12,15,17,14,7,16,12)
+PreTotM=c(50,36,37,37,30,16,30)
+RegGameM=c(104,84,98,94,76,95,92)
+RegPracM=c(6,3,9,1,3,8,6)
+RegTotM=c(110,90,107,95,79,103,98)
+CombGameM=c(142,108,118,117,99,95,110)
+CombPracM=c(18,18,26,15,10,24,18)
+CombTotM=c(160,126,144,132,109,119,128)
+MCLAvg=CombTotM/GameNum
+
+MCL=data.frame(year=c("2015", "2016", "2017", "2018", "2019", "2020", "2021"), 
+               PreGame=c(38,21,20,23,23,0,18), 
+               PrePrac=c(12,15,17,14,7,16,12),
+               PreTot=c(50,36,37,37,30,16,30),
+               RegGame=c(104,84,98,94,76,95,92),
+               RegPrac=c(6,3,9,1,3,8,6),
+               RegTot=c(110,90,107,95,79,103,98),
+               CombGame=c(142,108,118,117,99,95,110),
+               CombPrac=c(18,18,26,15,10,24,18),
+               CombTot=c(160,126,144,132,109,119,128),
+               MCLAvg=c(10.000000,7.875000,9.000000,8.250000,6.812500,7.437500,7.529412))
+
+Preseaon=data.frame(year=c("2015", "2016", "2017", "2018", "2019", "2020", "2021"),
+                    PreGameCN=c(54,45,46,34,49,0,22), 
+                    PrePracCN=c(29,26,45,45,30,30,30),
+                    PreGameAC=c(16,11,16,18,10,0,13),
+                    PrePracAC=c(13,9,15,10,7,11,9),
+                    PreGameMC=c(38,21,20,23,23,0,18), 
+                    PrePracMC=c(12,15,17,14,7,16,12))
 ```
 
 ## Motivation:
 
-I grew up loving the game of football, and currently enjoy watching all the football I can get and am a huge NFL fan. However, the NFL is a very physical and dangerous league. This has led many players and society as a whole to question how dangerous the game is. People want to know how likely NFL players are to suffer a serious injury. By studying the previous 7 NFL seasons and looking at the number of occurences of concussions, ACL tears, and MCL tears, we are able to come to discover the probability of an NFL player to suffer from one of these injuries. With this information, players and their loved ones are able to determine if the potential fame and fortune of the game is worth the potential risks that also exist and come with the game of football.
+I grew up loving the game of football, and currently enjoy watching all the football I can get and am a huge NFL fan. However, the NFL is a very physical and dangerous league. This has led many players and society as a whole to question how dangerous the game is. People want to know how likely NFL players are to suffer a serious injury. By studying the previous 7 NFL seasons and looking at the number of occurences of concussions, ACL tears, and MCL tears, we are able to come to discover the probability of an NFL player to suffer from one of these injuries, and if improvements in medicine and sport science has decreased the amount of these injuries in recent years. With this information, players and their loved ones are able to determine if the potential fame and fortune of the game is worth the potential risks that also exist and come with the game of football. 
 
 ## ACL Tears
+First, in Figure 1 below, we will look at the recent trends of one of the worst injuries that an NFL player may experience, an ACL tear. These are notorious for their excruciating pain and year-long recovery period. Additionally, sometimes players lose some of their athleticism or quickness, leading to a shorter career and another reason this injury is feared.
+```{r ACL, echo=FALSE, message=FALSE}
+
+
+fig <- plot_ly(ACL, y = ~PreTot, x = ~year, name = "Preseason", type = 'scatter',
+               mode = "markers", marker = list(color = "red"))
+fig <- fig %>% add_trace(y = ~RegTot, x = ~year, name = "Regular",type = 'scatter',
+                         mode = "markers", marker = list(color = "blue"))
+fig <- fig %>% add_trace(y = ~CombTot, x = ~year, name = "Total",type = 'scatter',
+                         mode = "markers", marker = list(color = "green"))
+fig <- fig %>% layout(
+  title = "Figure 1: ACL TRENDS",
+  xaxis = list(title = "year"),
+  yaxis = list(title = "# of ACL Injuries"),
+  margin = list(l = 100)
+)
+
+fig
+
+```
+From these trends, we can see that the number of ACL tears appears to be random per year for both the regular season as well as during the preseason. While recent medicine has made it easier and quicker for players to fully recover, the data does not appear to show an improvement in preventing the number of ACL tears before they occur. 
 
 ## MCL Tears
+The second major injury we will look at is the MCL tear. Although usually not as severe as an ACL tear, this injury is still very serious and can have a significant affect on players' futures. Let's take a look at Figure 2 below:
+```{r MCL, echo=FALSE}
+fig <- plot_ly(MCL, y = ~PreTot, x = ~year, name = "Preseason", type = 'scatter',
+               mode = "markers", marker = list(color = "red"))
+fig <- fig %>% add_trace(y = ~RegTot, x = ~year, name = "Regular",type = 'scatter',
+                         mode = "markers", marker = list(color = "blue"))
+fig <- fig %>% add_trace(y = ~CombTot, x = ~year, name = "Total",type = 'scatter',
+                         mode = "markers", marker = list(color = "green"))
+fig <- fig %>% layout(
+  title = "Figure 2: MCL TRENDS",
+  xaxis = list(title = "year"),
+  yaxis = list(title = "# of MCL Injuries"),
+  margin = list(l = 100)
+)
+
+fig
+```
+From the trend, we can see slight decreases in the number of MCL injuries suffered in both the preseason and regular season, respectively.
 
 ## Concussions
+The third and final injury is the most infamous injury in the NFL: the concussion. With CTE becoming an ever-increasing concern for past, present, and future NFL players (and all football players in general), the NFL has put a lot of emphasis on making helmets and game rules safer in order to bring down the number of concussions and reduce the risk of CTE. Does the data back up this effort? Let us check Figure 3 below:
+```{r Concussions, echo=FALSE}
+fig <- plot_ly(Concussion, y = ~PreTot, x = ~year, name = "Preseason", type = 'scatter',
+               mode = "markers", marker = list(color = "red"))
+fig <- fig %>% add_trace(y = ~RegTot, x = ~year, name = "Regular",type = 'scatter',
+                         mode = "markers", marker = list(color = "blue"))
+fig <- fig %>% add_trace(y = ~CombTot, x = ~year, name = "Total",type = 'scatter',
+                         mode = "markers", marker = list(color = "green"))
+fig <- fig %>% layout(
+  title = "Figure 3: CONCUSSION TRENDS",
+  xaxis = list(title = "year"),
+  yaxis = list(title = "# of Concussions"),
+  margin = list(l = 100)
+)
 
-```{r cars}
-summary(cars)
+fig
+```
+It appears from the plot that the extra emphasis on player safety has indeed reduced the amount of concussions obtained in recent years.
+
+## Comparison
+
+Now, let's compare the three injuries over time in Figure 4 below:
+```{r Preseason, echo=FALSE}
+Total=data.frame(year=c("2015", "2016", "2017", "2018", "2019", "2020", "2021"),
+                 CombTotCN=c(275,243,281,214,224,172,187),
+                 CombTotMC=c(160,126,144,132,109,119,128),
+                 CombTotAC=c(59,56,54,57,49,51,71))
+
+fig <- plot_ly(Total, y = ~CombTotCN, x = ~year, name = "Concussion", type = 'scatter',
+               mode = "markers", marker = list(color = "red"))
+fig <- fig %>% add_trace(y = ~CombTotMC, x = ~year, name = "MCL",type = 'scatter',
+                         mode = "markers", marker = list(color = "blue"))
+fig <- fig %>% add_trace(y = ~CombTotAC, x = ~year, name = "ACL",type = 'scatter',
+                         mode = "markers", marker = list(color = "green"))
+fig <- fig %>% layout(
+  title = "Figure 4: Injury Discrepancies",
+  xaxis = list(title = "year"),
+  yaxis = list(title = "# of Injury Occurences"),
+  margin = list(l = 100)
+)
+
+fig
 ```
 
-## Including Plots
+From Figure 4, we are able to see that concussions used to outnumber the other injuries per year by 100 and 200, respectively. Additionally, you can see the result of the NFL's hard work to reduce head injuries and concussions, as these injuries have decreased sharper than MCL injuries have decreased, and you can also see the amount of ACL injuries remain steady, and even slightly increase in recent years. This could be due to players hitting lower, for they are penalized for hitting opponents in the head, even accidentally, potentially leading to more low tackles and an increase in ACL tears. Using this data in Figure 4, and knowing that there are 1,696 total players on NFL rosters during the season, we can calculate probabilities. In 2015, the chance that a player obtained a concussion at some point in the year was 16.21%, and fell to 11.03% by 2021. For MCL tears, these chances were 9.43% in 2015 and 7.55% in 2021, respectively. Finally, the likelihood an NFL player obtained an ACL tear in 2015 was 3.48% and rose to 4.19% in 2021. 
 
-You can also embed plots, for example:
+## Things to Improve:
 
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+I would have liked to have found and been able to use more data,however I was only able to find data tables from these years for these 3 injuries on the NFL's official site. Everywhere else I looked, I was unable to find any data I could take and use for my project. Additionally, I would have liked to used more in depth data for my analysis, such as comparing different positions and comparing whether some positions are more likely to obtain certain injuries than others. 
