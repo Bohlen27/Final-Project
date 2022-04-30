@@ -1,0 +1,35 @@
+---
+title: "NFL Serious Injury Data"
+author: "Kyle Bohlen"
+date: "4/29/2022"
+always_allow_html: true
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Motivation:
+
+I grew up loving the game of football, and currently enjoy watching all the football I can get and am a huge NFL fan. However, the NFL is a very physical and dangerous league. This has led many players and society as a whole to question how dangerous the game is. People want to know how likely NFL players are to suffer a serious injury. By studying the previous 7 NFL seasons and looking at the number of occurences of concussions, ACL tears, and MCL tears, we are able to come to discover the probability of an NFL player to suffer from one of these injuries. With this information, players and their loved ones are able to determine if the potential fame and fortune of the game is worth the potential risks that also exist and come with the game of football.
+
+## ACL Tears
+
+## MCL Tears
+
+## Concussions
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
